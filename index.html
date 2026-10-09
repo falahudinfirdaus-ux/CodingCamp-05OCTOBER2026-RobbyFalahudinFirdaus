@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="error-banner" role="alert" aria-live="polite" hidden></div>
+
+  <main>
+
+    <!-- ============================================================ -->
+    <!-- GREETING WIDGET                                              -->
+    <!-- ============================================================ -->
+    <section id="greeting-widget" aria-label="Greeting">
+      <div class="greeting-top">
+        <p id="greeting-text" aria-live="polite"></p>
+        <p id="date-text"></p>
+        <p id="time-text" aria-live="polite"></p>
+      </div>
+      <div class="greeting-name">
+        <label for="user-name-input">Your name</label>
+        <input type="text" id="user-name-input" maxlength="100"
+               placeholder="Enter your name" autocomplete="off">
+        <button type="button" id="save-name-btn">Save</button>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- FOCUS TIMER                                                  -->
+    <!-- ============================================================ -->
+    <section id="focus-timer" aria-label="Focus Timer">
+      <h2>Focus Timer</h2>
+
+      <div id="timer-duration-row">
+        <label for="pomodoro-duration">Duration (min)</label>
+        <input type="number" id="pomodoro-duration" min="1" max="60" value="25">
+      </div>
+
+      <p id="timer-display" aria-live="polite" aria-label="Time remaining">25:00</p>
+      <p id="timer-done" hidden>&#x2713; Session complete!</p>
+
+      <div class="timer-controls">
+        <button type="button" id="timer-start">Start</button>
+        <button type="button" id="timer-stop"  disabled>Stop</button>
+        <button type="button" id="timer-reset">Reset</button>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TO-DO LIST                                                   -->
+    <!-- ============================================================ -->
+    <section id="task-list" aria-label="To-Do List">
+      <h2>To-Do List</h2>
+
+      <div class="task-add-row">
+        <label for="task-input" class="sr-only">New task</label>
+        <input type="text" id="task-input" maxlength="500"
+               placeholder="Add a new task..." autocomplete="off">
+        <button type="button" id="task-add-btn">Add</button>
+      </div>
+
+      <div class="task-sort-row">
+        <label for="task-sort">Sort by</label>
+        <select id="task-sort">
+          <option value="dateAdded">Date Added</option>
+          <option value="az">A &#x2192; Z</option>
+          <option value="za">Z &#x2192; A</option>
+          <option value="completedLast">Completed Last</option>
+        </select>
+      </div>
+
+      <ul id="task-ul" aria-label="Tasks"></ul>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- QUICK LINKS                                                  -->
+    <!-- ============================================================ -->
+    <section id="quick-links" aria-label="Quick Links">
+      <h2>Quick Links</h2>
+
+      <!-- Add link form -->
+      <div class="ql-add-row">
+        <label for="ql-label-input">Label</label>
+        <input type="text" id="ql-label-input" maxlength="100"
+               placeholder="e.g. Google" autocomplete="off">
+        <label for="ql-url-input">URL</label>
+        <input type="url" id="ql-url-input" maxlength="2048"
+               placeholder="https://..." autocomplete="off">
+        <button type="button" id="ql-add-btn">Add Link</button>
+      </div>
+
+      <!-- Link buttons rendered here by JS -->
+      <div id="ql-list" role="list" aria-label="Quick links"></div>
+    </section>
+
+  </main>
+
+  <script defer src="js/app.js"></script>
+</body>
+</html>
+

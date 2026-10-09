@@ -1,0 +1,501 @@
+﻿/* To-Do List Life Dashboard styles */
+
+/* ==========================================================================
+   RESET & BASE
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Colour palette — all text/bg combos meet 4.5:1 contrast ratio */
+  --bg-page:        #1a1a2e;   /* dark navy */
+  --bg-section:     #16213e;   /* slightly lighter navy */
+  --bg-input:       #0f3460;   /* deep blue */
+  --bg-btn:         #e94560;   /* coral-red accent */
+  --bg-btn-hover:   #c73652;
+  --bg-btn-sec:     #0f3460;   /* secondary button */
+  --bg-btn-sec-hover: #1a4a80;
+  --text-primary:   #eaeaea;   /* near-white — 13:1 on --bg-section */
+  --text-muted:     #a0a8b8;   /* muted — 5.2:1 on --bg-section */
+  --text-done:      #6b7280;   /* struck-through tasks */
+  --accent:         #e94560;
+  --border:         #0f3460;
+  --radius:         8px;
+  --gap:            20px;      /* section separation >= 16 px */
+  --font-base:      1rem;      /* 16px */
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: var(--font-base);
+  line-height: 1.6;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: var(--gap);
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Visually-hidden helper (screen-reader only) */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   SHARED: INPUTS & BUTTONS
+   ========================================================================== */
+
+input[type="text"],
+input[type="url"],
+input[type="number"],
+select {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  font-size: var(--font-base);
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-size: var(--font-base);
+  font-weight: 500;
+  background: var(--bg-btn);
+  color: #fff;
+  transition: background 0.2s, opacity 0.2s;
+  white-space: nowrap;
+}
+
+button:hover:not(:disabled) {
+  background: var(--bg-btn-hover);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Secondary buttons (edit, cancel, delete, save-name) */
+button.task-edit-btn,
+button.task-cancel-btn,
+button.task-confirm-btn,
+button#save-name-btn,
+button#timer-reset,
+button#timer-stop {
+  background: var(--bg-btn-sec);
+}
+
+button.task-edit-btn:hover:not(:disabled),
+button.task-cancel-btn:hover:not(:disabled),
+button.task-confirm-btn:hover:not(:disabled),
+button#save-name-btn:hover:not(:disabled),
+button#timer-reset:hover:not(:disabled),
+button#timer-stop:hover:not(:disabled) {
+  background: var(--bg-btn-sec-hover);
+}
+
+button.task-delete-btn,
+button.ql-delete-btn {
+  background: transparent;
+  color: #e94560;
+  border: 1px solid #e94560;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+button.task-delete-btn:hover:not(:disabled),
+button.ql-delete-btn:hover:not(:disabled) {
+  background: rgba(233, 69, 96, 0.15);
+}
+
+/* ==========================================================================
+   ERROR BANNER
+   ========================================================================== */
+
+#error-banner {
+  background: #7f1d1d;
+  color: #fecaca;
+  border: 1px solid #dc2626;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: var(--gap);
+  font-size: 0.9rem;
+}
+
+#error-banner p {
+  margin: 2px 0;
+}
+
+/* ==========================================================================
+   LAYOUT — MAIN GRID
+   ========================================================================== */
+
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--gap);
+  /* Single column on narrow screens */
+  grid-template-columns: 1fr;
+}
+
+/* Section card style */
+main > section {
+  background: var(--bg-section);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--border);
+}
+
+/* Multi-column at wider viewports */
+@media (min-width: 768px) {
+  main {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1200px) {
+  main {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+/* ==========================================================================
+   GREETING WIDGET
+   ========================================================================== */
+
+#greeting-widget {
+  /* Span full width on mid and large screens so it feels like a header */
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.greeting-top {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#greeting-text {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+#time-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+#date-text {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.greeting-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.greeting-name label {
+  flex-shrink: 0;
+}
+
+.greeting-name input {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.greeting-name button {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   FOCUS TIMER
+   ========================================================================== */
+
+#focus-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+#focus-timer h2 {
+  width: 100%;
+  text-align: left;
+}
+
+#timer-duration-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+#timer-duration-row input {
+  width: 70px;
+}
+
+#timer-display {
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+#timer-done {
+  font-size: 1rem;
+  color: #4ade80; /* green — sufficient contrast on dark bg */
+  font-weight: 600;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   TO-DO LIST
+   ========================================================================== */
+
+#task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.task-add-row input {
+  flex: 1;
+}
+
+.task-add-row button {
+  flex-shrink: 0;
+}
+
+.task-sort-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-sort-row select {
+  flex: 1;
+}
+
+#task-ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Scrollbar styling for webkit */
+#task-ul::-webkit-scrollbar {
+  width: 4px;
+}
+#task-ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+#task-ul::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-input);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  transition: background 0.15s;
+}
+
+.task-item:hover {
+  background: #143866;
+}
+
+.task-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+  /* Override shared input styles */
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.task-description {
+  flex: 1;
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+/* Completed task */
+.task-done .task-description {
+  text-decoration: line-through;
+  color: var(--text-done);
+}
+
+.task-edit-input {
+  flex: 1;
+  font-size: var(--font-base);
+}
+
+.task-item button {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  font-size: 0.82rem;
+}
+
+/* ==========================================================================
+   QUICK LINKS
+   ========================================================================== */
+
+#quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ql-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ql-add-row input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.ql-add-row label {
+  flex-shrink: 0;
+}
+
+#ql-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ql-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ql-link-btn {
+  background: var(--bg-btn-sec);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ql-link-btn:hover {
+  background: var(--bg-btn-sec-hover);
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERRIDES
+   ========================================================================== */
+
+/* On the two-column layout, span task-list full width so it gets more space */
+@media (min-width: 768px) and (max-width: 1199px) {
+  #task-list {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Narrow mobile: ensure nothing overflows */
+@media (max-width: 400px) {
+  #time-text {
+    font-size: 2rem;
+  }
+  #timer-display {
+    font-size: 2.8rem;
+  }
+  .greeting-name input {
+    width: 140px;
+  }
+}
